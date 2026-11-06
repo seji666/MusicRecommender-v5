@@ -1,0 +1,98 @@
+@model Playlist
+@{
+    ViewData["Title"] = Model.Name;
+}
+<div class="pl-header mb-4">
+    <div class="pl-mosaic pl-mosaic-lg">
+        @{ var covers = Model.Tracks.Where(t => !string.IsNullOrEmpty(t.CoverUrl)).Select(t => t.CoverUrl!).Take(4).ToList(); }
+        @for (var i = 0; i < 4; i++)
+        {
+            if (i < covers.Count)
+            {
+                <img src="@covers[i]" alt="" />
+            }
+            else
+            {
+                <div class="pl-mosaic-empty"><i class="bi bi-music-note"></i></div>
+            }
+        }
+    </div>
+    <div class="pl-header-info">
+        <div class="text-muted small text-uppercase">Плейлист</div>
+        <h1 class="pl-title-lg">@Model.Name</h1>
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <p class="text-muted mb-2">@Model.Description</p>
+        }
+        <div class="text-muted small mb-3">
+            @Model.Tracks.Count @(Model.Tracks.Count == 1 ? "песен" : "песни") · създаден на @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-ghost" asp-action="Index"><i class="bi bi-arrow-left"></i> Всички плейлисти</a>
+            <a class="btn btn-ghost" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil"></i> Преименувай</a>
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('Да изтрия ли този плейлист?');">
+                <button class="btn btn-ghost btn-ghost-danger" type="submit"><i class="bi bi-trash"></i> Изтрий</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (Model.Tracks.Count == 0)
+{
+    <div class="empty-state">
+        <i class="bi bi-music-note-list"></i>
+        <p>Плейлистът е празен. Добавяй песни с бутона <i class="bi bi-collection-play"></i> от всяка песен.</p>
+        <div class="d-flex justify-content-center gap-2">
+            <a class="btn btn-accent" asp-controller="Tracks" asp-action="Search"><i class="bi bi-search"></i> Търси музика</a>
+            <a class="btn btn-ghost" asp-controller="Tracks" asp-action="Favorites"><i class="bi bi-heart-fill"></i> От любимите</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="panel p-0 table-responsive">
+        <table class="table table-borderless align-middle mb-0 fav-table">
+            <thead><tr><th style="width:48px">#</th><th style="width:72px"></th><th>Песен</th><th>Албум</th><th>Добавена</th><th></th></tr></thead>
+            <tbody>
+            @{ var n = 0; }
+            @foreach (var t in Model.Tracks)
+            {
+                n++;
+                <tr>
+                    <td class="text-muted">@n</td>
+                    <td>
+                        <div class="cover-wrap cover-sm">
+                            @if (!string.IsNullOrEmpty(t.CoverUrl)) { <img src="@t.CoverUrl" alt="" loading="lazy" /> }
+                            @if (!string.IsNullOrEmpty(t.PreviewUrl))
+                            {
+                                <button type="button" class="play-btn play-overlay" aria-label="Пусни"
+                                        data-src="@t.PreviewUrl" data-title="@t.Title"
+                                        data-artist="@t.Artist" data-cover="@t.CoverUrl">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                            }
+                        </div>
+                    </td>
+                    <td><div class="fw-semibold">@t.Title</div><div class="text-muted small">@t.Artist</div></td>
+                    <td class="text-muted">@t.Album</td>
+                    <td class="text-muted small">@t.AddedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                    <td class="text-end text-nowrap">
+                        <div class="d-inline-flex align-items-center gap-1">
+                            @if (!string.IsNullOrEmpty(t.Link))
+                            {
+                                <a href="@t.Link" target="_blank" rel="noopener" class="btn btn-sm btn-ghost-danger" title="Отвори в Deezer"><i class="bi bi-box-arrow-up-right"></i></a>
+                            }
+                            <form asp-action="RemoveTrack" method="post">
+                                <input type="hidden" name="playlistId" value="@Model.Id" />
+                                <input type="hidden" name="trackId" value="@t.Id" />
+                                <button class="btn btn-sm btn-ghost-danger" title="Премахни от плейлиста"><i class="bi bi-x-lg"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

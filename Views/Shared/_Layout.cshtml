@@ -1,0 +1,99 @@
+@{
+    var ctrl = ViewContext.RouteData.Values["controller"]?.ToString();
+    var act = ViewContext.RouteData.Values["action"]?.ToString();
+    string Active(string c, string a) => ctrl == c && act == a ? "active" : "";
+    string ActiveC(string c) => ctrl == c ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="bg" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Music Recommender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-xl app-nav sticky-top">
+        <div class="container">
+            <a class="navbar-brand brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-icon"><i class="bi bi-music-note-beamed"></i></span> Music<span class="text-accent">AI</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav">
+                <div class="navbar-nav ms-auto gap-1">
+                    <a class="nav-link @Active("Home", "Index")" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill"></i> Начало</a>
+                    <a class="nav-link @Active("Home", "Top")" asp-controller="Home" asp-action="Top"><i class="bi bi-fire"></i> Топ класация</a>
+                    <a class="nav-link @Active("Tracks", "Search")" asp-controller="Tracks" asp-action="Search"><i class="bi bi-search"></i> Търсене</a>
+                    <a class="nav-link @Active("Tracks", "Favorites")" asp-controller="Tracks" asp-action="Favorites"><i class="bi bi-heart-fill"></i> Любими</a>
+                    <a class="nav-link @ActiveC("Playlists")" asp-controller="Playlists" asp-action="Index"><i class="bi bi-collection-play-fill"></i> Плейлисти</a>
+                    <a class="nav-link @Active("Recommendations", "Index")" asp-controller="Recommendations" asp-action="Index"><i class="bi bi-stars"></i> AI препоръки</a>
+                    <a class="nav-link @Active("Recommendations", "History")" asp-controller="Recommendations" asp-action="History"><i class="bi bi-clock-history"></i> История</a>
+                    <a class="nav-link @Active("Home", "About")" asp-controller="Home" asp-action="About"><i class="bi bi-info-circle-fill"></i> За приложението</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4 page-content">
+        @if (TempData["Message"] is string msg)
+        {
+            <div class="alert alert-success d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill"></i> @msg</div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="app-footer text-center text-muted small">
+        <a asp-controller="Home" asp-action="About">За приложението</a> · Данни от <a href="https://developers.deezer.com/api" target="_blank" rel="noopener">Deezer API</a> · Препоръки от езиков модел (ИИ) · ASP.NET Core MVC
+    </footer>
+
+    <!-- Прозорец "Добави в плейлист" (попълва се от site.js) -->
+    <div class="modal fade" id="plModal" tabindex="-1" aria-labelledby="plModalTitle" aria-hidden="true"
+         data-list-url="@Url.Action("List", "Playlists")" data-add-url="@Url.Action("AddTrack", "Playlists")"
+         data-create-url="@Url.Action("Create", "Playlists")">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content pl-modal">
+                <div class="modal-header border-0 pb-0">
+                    <div class="min-w-0">
+                        <h5 class="modal-title" id="plModalTitle"><i class="bi bi-collection-play-fill text-accent"></i> Добави в плейлист</h5>
+                        <div id="plm-track" class="text-muted small text-truncate"></div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Затвори"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div id="plm-status" class="small mb-2 d-none"></div>
+                    <div id="plm-list" class="pl-pick-list"></div>
+                    <form id="plm-new" class="d-flex gap-2 mt-3" autocomplete="off">
+                        <input id="plm-new-name" class="form-control" maxlength="80" placeholder="Нов плейлист…" aria-label="Име на нов плейлист" />
+                        <button class="btn btn-accent text-nowrap" type="submit"><i class="bi bi-plus-lg"></i> Създай</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Глобален плейър: само една песен звучи наведнъж, с общо ниво на звука -->
+    <div id="player" class="player-bar d-none">
+        <img id="pl-cover" class="pl-cover" alt="" />
+        <div class="pl-info">
+            <div id="pl-title" class="pl-title"></div>
+            <div id="pl-artist" class="pl-artist"></div>
+        </div>
+        <button id="pl-toggle" class="pl-btn" type="button" aria-label="Пусни/Пауза"><i class="bi bi-pause-fill"></i></button>
+        <span id="pl-time" class="pl-time">0:00</span>
+        <input id="pl-progress" class="pl-progress" type="range" min="0" max="1000" value="0" aria-label="Позиция" />
+        <i class="bi bi-volume-up pl-vol-icon" id="pl-vol-icon"></i>
+        <input id="pl-volume" class="pl-volume" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Сила на звука" />
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

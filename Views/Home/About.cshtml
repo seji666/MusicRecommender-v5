@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "За приложението";
+}
+<section class="hero mb-4">
+    <div class="hero-badge"><i class="bi bi-info-circle-fill"></i> За приложението</div>
+    <h1>Music<span class="text-gradient">AI</span> — музикален препоръчител</h1>
+    <p class="lead mb-0">Уеб приложение, което помага да откриеш нова музика според настроението си. То комбинира езиков модел (ИИ), който предлага песни, с каталога на Deezer, откъдето идват данните, обложките и аудио откъсите.</p>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-7">
+        <div class="panel h-100">
+            <h2 class="h5 mb-3"><i class="bi bi-bullseye text-accent"></i> Цел на проекта</h2>
+            <p class="text-muted">Класическите препоръчители разчитат на история на слушане от много потребители. Тук подходът е различен: описваш с думи как се чувстваш или за какъв повод ти трябва музика („спокойна вечер“, „тренировка“, „дълъг път“), а моделът предлага песни с кратка обосновка защо са подходящи.</p>
+            <p class="text-muted mb-0">Приложението е учебен проект, изграден с ASP.NET Core MVC. Не изисква регистрация — всички данни (любими песни, плейлисти, история) се пазят в локална SQLite база.</p>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="panel h-100">
+            <h2 class="h5 mb-3"><i class="bi bi-cpu text-accent"></i> Технологии</h2>
+            <ul class="about-list mb-0">
+                <li><i class="bi bi-check2"></i> ASP.NET Core 8 MVC (Razor изгледи)</li>
+                <li><i class="bi bi-check2"></i> Entity Framework Core + SQLite</li>
+                <li><i class="bi bi-check2"></i> Deezer API — търсене, класация, обложки, 30 сек. откъси</li>
+                <li><i class="bi bi-check2"></i> Езиков модел през OpenAI-съвместим API (Ollama, LM Studio, OpenAI)</li>
+                <li><i class="bi bi-check2"></i> Bootstrap 5 и vanilla JavaScript</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="section-head mt-5">
+    <h2><i class="bi bi-grid-fill text-accent"></i> Възможности</h2>
+</div>
+<div class="row row-cols-1 row-cols-md-2 g-3 mb-4">
+    <div class="col"><div class="panel h-100"><h3 class="h6"><i class="bi bi-house-door-fill text-accent"></i> Начало</h3><p class="text-muted small mb-0">Обобщение на твоята библиотека, бърз достъп до всички раздели и преглед на популярните песни.</p></div></div>
+    <div class="col"><div class="panel h-100"><h3 class="h6"><i class="bi bi-fire text-accent"></i> Топ класация и търсене</h3><p class="text-muted small mb-0">Разглеждане на най-слушаните песни и търсене по изпълнител, заглавие или албум. Всяка песен може да се изслуша в глобалния плейър.</p></div></div>
+    <div class="col"><div class="panel h-100"><h3 class="h6"><i class="bi bi-heart-fill text-accent"></i> Любими</h3><p class="text-muted small mb-0">Запазване на песни с едно натискане. Последните любими се подават на модела, за да са препоръките по-близки до вкуса ти.</p></div></div>
+    <div class="col"><div class="panel h-100"><h3 class="h6"><i class="bi bi-collection-play-fill text-accent"></i> Плейлисти</h3><p class="text-muted small mb-0">Създаване, преименуване и изтриване на плейлисти, добавяне и премахване на песни от тях. Песен се добавя към плейлист от всяка карта чрез бутона с иконата за плейлист.</p></div></div>
+    <div class="col"><div class="panel h-100"><h3 class="h6"><i class="bi bi-stars text-accent"></i> AI препоръки</h3><p class="text-muted small mb-0">Препоръки по настроение, жанр и допълнителни предпочитания, с обяснение за всяка песен.</p></div></div>
+    <div class="col"><div class="panel h-100"><h3 class="h6"><i class="bi bi-clock-history text-accent"></i> История</h3><p class="text-muted small mb-0">Последните получени препоръки се запазват и могат да се прегледат по-късно.</p></div></div>
+</div>
+
+<div class="section-head mt-5">
+    <h2><i class="bi bi-diagram-3-fill text-accent"></i> Как се получава препоръка</h2>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="panel h-100"><div class="step-num">1</div><p class="small mb-0">Потребителят описва настроение, жанр и предпочитания.</p></div></div>
+    <div class="col-md-3"><div class="panel h-100"><div class="step-num">2</div><p class="small mb-0">Заявката (заедно с любимите песни, ако е избрано) се изпраща към езиковия модел.</p></div></div>
+    <div class="col-md-3"><div class="panel h-100"><div class="step-num">3</div><p class="small mb-0">Всяко предложение (изпълнител и заглавие) се търси в Deezer, за да се вземат обложка и аудио откъс.</p></div></div>
+    <div class="col-md-3"><div class="panel h-100"><div class="step-num">4</div><p class="small mb-0">Резултатът се показва и се записва в историята.</p></div></div>
+</div>
+
+<div class="panel">
+    <h2 class="h6"><i class="bi bi-exclamation-circle text-accent"></i> Добре е да знаеш</h2>
+    <ul class="about-list mb-0 text-muted small">
+        <li><i class="bi bi-dot"></i> Моделът понякога предлага песен, която не съществува или не се намира в Deezer — тогава това се отбелязва в резултата.</li>
+        <li><i class="bi bi-dot"></i> Deezer предоставя само кратък откъс от песните; пълното слушане става от връзката към Deezer.</li>
+        <li><i class="bi bi-dot"></i> Качеството и скоростта на препоръките зависят от избрания езиков модел (настройва се в <code>appsettings.json</code> → <code>Llm</code>).</li>
+    </ul>
+</div>

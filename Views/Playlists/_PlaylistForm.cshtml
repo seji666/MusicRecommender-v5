@@ -1,0 +1,11 @@
+@model PlaylistForm
+<div class="mb-3">
+    <label asp-for="Name" class="form-label"></label>
+    <input asp-for="Name" class="form-control form-control-lg" placeholder="напр. Вечерно спокойствие" maxlength="80" autofocus />
+    <span asp-validation-for="Name" class="text-danger small"></span>
+</div>
+<div class="mb-4">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control" rows="3" maxlength="300" placeholder="За какъв повод е този плейлист?"></textarea>
+    <span asp-validation-for="Description" class="text-danger small"></span>
+</div>

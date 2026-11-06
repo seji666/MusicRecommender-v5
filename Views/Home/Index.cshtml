@@ -1,0 +1,114 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Начало";
+}
+<section class="hero mb-4">
+    <div class="hero-badge"><i class="bi bi-stars"></i> Интелигентен препоръчител</div>
+    <h1>Открий следващата си <span class="text-gradient">любима песен</span></h1>
+    <p class="lead">Разглеждай най-слушаните песни в Deezer, запазвай любими, подреждай ги в собствени плейлисти и получавай персонални препоръки от изкуствен интелект според настроението ти.</p>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-accent btn-lg" asp-controller="Recommendations" asp-action="Index"><i class="bi bi-stars"></i> Получи AI препоръки</a>
+        <a class="btn btn-ghost btn-lg" asp-controller="Tracks" asp-action="Search"><i class="bi bi-search"></i> Търси музика</a>
+        <a class="btn btn-ghost btn-lg" asp-controller="Playlists" asp-action="Create"><i class="bi bi-plus-lg"></i> Нов плейлист</a>
+    </div>
+</section>
+
+<!-- Статистика -->
+<div class="row g-3 mb-5">
+    <div class="col-12 col-md-4">
+        <a class="stat-card" asp-controller="Tracks" asp-action="Favorites">
+            <i class="bi bi-heart-fill"></i>
+            <div><div class="stat-num">@Model.FavoritesCount</div><div class="stat-label">любими песни</div></div>
+        </a>
+    </div>
+    <div class="col-12 col-md-4">
+        <a class="stat-card" asp-controller="Playlists" asp-action="Index">
+            <i class="bi bi-collection-play-fill"></i>
+            <div><div class="stat-num">@Model.PlaylistsCount</div><div class="stat-label">плейлиста</div></div>
+        </a>
+    </div>
+    <div class="col-12 col-md-4">
+        <a class="stat-card" asp-controller="Recommendations" asp-action="History">
+            <i class="bi bi-clock-history"></i>
+            <div><div class="stat-num">@Model.RecommendationsCount</div><div class="stat-label">направени препоръки</div></div>
+        </a>
+    </div>
+</div>
+
+<!-- Какво можеш да правиш -->
+<div class="section-head">
+    <h2><i class="bi bi-grid-fill text-accent"></i> Какво можеш да правиш</h2>
+</div>
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-5">
+    <div class="col">
+        <a class="feature-card" asp-controller="Home" asp-action="Top">
+            <span class="feature-icon"><i class="bi bi-fire"></i></span>
+            <h3>Топ класация</h3>
+            <p>Най-слушаните песни в момента според Deezer, с 30-секундно изслушване.</p>
+        </a>
+    </div>
+    <div class="col">
+        <a class="feature-card" asp-controller="Tracks" asp-action="Search">
+            <span class="feature-icon"><i class="bi bi-search"></i></span>
+            <h3>Търсене</h3>
+            <p>Намери песен, изпълнител или албум и я запази с едно натискане.</p>
+        </a>
+    </div>
+    <div class="col">
+        <a class="feature-card" asp-controller="Playlists" asp-action="Index">
+            <span class="feature-icon"><i class="bi bi-collection-play-fill"></i></span>
+            <h3>Плейлисти</h3>
+            <p>Създавай собствени плейлисти и подреждай в тях любимите си песни.</p>
+        </a>
+    </div>
+    <div class="col">
+        <a class="feature-card" asp-controller="Recommendations" asp-action="Index">
+            <span class="feature-icon"><i class="bi bi-stars"></i></span>
+            <h3>AI препоръки</h3>
+            <p>Опиши настроението си и езиковият модел ще предложи подходящи песни.</p>
+        </a>
+    </div>
+</div>
+
+<!-- Последни плейлисти -->
+@if (Model.RecentPlaylists.Count > 0)
+{
+    <div class="section-head">
+        <h2><i class="bi bi-collection-play-fill text-accent"></i> Твоите плейлисти</h2>
+        <a class="small" asp-controller="Playlists" asp-action="Index">Всички плейлисти <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-5">
+        @foreach (var p in Model.RecentPlaylists)
+        {
+            <div class="col"><partial name="_PlaylistCard" model="p" /></div>
+        }
+    </div>
+}
+
+<!-- Топ песни (кратък преглед) -->
+<div class="section-head">
+    <h2><i class="bi bi-fire text-accent"></i> Сега е популярно</h2>
+    <a class="small" asp-controller="Home" asp-action="Top">Пълна класация <i class="bi bi-arrow-right"></i></a>
+</div>
+@if (Model.Error != null)
+{
+    <div class="alert alert-warning">@Model.Error</div>
+}
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3 mb-5">
+    @foreach (var t in Model.TopTracks)
+    {
+        <div class="col">
+            <partial name="_TrackCard" model="t" view-data='new ViewDataDictionary(ViewData) { { "ShowAdd", true } }' />
+        </div>
+    }
+</div>
+
+<!-- Как работи -->
+<div class="section-head">
+    <h2><i class="bi bi-signpost-split-fill text-accent"></i> Как работи</h2>
+</div>
+<div class="row g-3">
+    <div class="col-md-4"><div class="panel h-100"><div class="step-num">1</div><h3 class="h6">Опиши настроението</h3><p class="text-muted mb-0 small">Избери повод, жанр и допълнителни предпочитания в раздел „AI препоръки“.</p></div></div>
+    <div class="col-md-4"><div class="panel h-100"><div class="step-num">2</div><h3 class="h6">Получи предложения</h3><p class="text-muted mb-0 small">Езиковият модел предлага песни, а приложението ги намира в Deezer и ги прави изслушваеми.</p></div></div>
+    <div class="col-md-4"><div class="panel h-100"><div class="step-num">3</div><h3 class="h6">Запази и подреди</h3><p class="text-muted mb-0 small">Добави харесаните в любими или в плейлист — те подобряват следващите препоръки.</p></div></div>
+</div>

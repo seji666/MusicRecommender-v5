@@ -1,0 +1,20 @@
+@model PlaylistForm
+@{
+    ViewData["Title"] = "Нов плейлист";
+}
+<div class="section-head">
+    <h2><i class="bi bi-plus-circle-fill text-accent"></i> Нов плейлист</h2>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 col-xl-6">
+        <form asp-action="Create" method="post" class="panel">
+            <partial name="_PlaylistForm" model="Model" />
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-accent"><i class="bi bi-check-lg"></i> Създай плейлист</button>
+                <a class="btn btn-ghost" asp-action="Index">Отказ</a>
+            </div>
+        </form>
+        <p class="text-muted small mt-3"><i class="bi bi-lightbulb"></i> След създаването можеш да добавяш песни от Топ класацията, търсенето, любимите и AI препоръките — с бутона <i class="bi bi-collection-play"></i> на всяка песен.</p>
+    </div>
+</div>

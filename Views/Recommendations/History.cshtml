@@ -1,0 +1,42 @@
+@model List<HistoryItem>
+@{
+    ViewData["Title"] = "История";
+}
+<div class="section-head">
+    <h2><i class="bi bi-clock-history text-accent"></i> История на препоръките</h2>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="empty-state">
+        <i class="bi bi-clock-history"></i>
+        <p>Все още няма направени препоръки.</p>
+        <a class="btn btn-accent" asp-action="Index">Направи първата</a>
+    </div>
+}
+
+<div class="row g-3">
+@foreach (var h in Model)
+{
+    <div class="col-lg-6">
+        <div class="panel h-100">
+            <div class="d-flex align-items-start mb-2">
+                <div>
+                    <div class="fw-semibold">@h.Record.Mood</div>
+                    @if (!string.IsNullOrWhiteSpace(h.Record.Genre)) { <span class="badge badge-soft">@h.Record.Genre</span> }
+                </div>
+                <span class="text-muted small ms-auto">@h.Record.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+            </div>
+            <ul class="hist-list">
+                @foreach (var s in h.Suggestions)
+                {
+                    <li>
+                        <div><span class="fw-medium">@s.Title</span> <span class="text-muted">· @s.Artist</span></div>
+                        <div class="small text-muted">@s.Reason</div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+</div>

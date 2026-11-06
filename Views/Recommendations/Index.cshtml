@@ -1,0 +1,71 @@
+@model RecommendationViewModel
+@{
+    ViewData["Title"] = "AI препоръки";
+}
+<div class="section-head">
+    <h2><i class="bi bi-stars text-accent"></i> AI препоръки</h2>
+</div>
+
+<form asp-action="Index" method="post" class="panel row g-3 mb-4 loading-form">
+    <div class="col-md-6">
+        <label asp-for="Request.Mood" class="form-label"></label>
+        <input asp-for="Request.Mood" class="form-control" placeholder="напр. тренировка, дъждовна вечер, пътуване" />
+        <span asp-validation-for="Request.Mood" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Request.Genre" class="form-label"></label>
+        <input asp-for="Request.Genre" class="form-control" placeholder="напр. rock, jazz, pop" />
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Request.Count" class="form-label"></label>
+        <input asp-for="Request.Count" type="number" min="3" max="10" class="form-control" />
+        <span asp-validation-for="Request.Count" class="text-danger small"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Request.Details" class="form-label"></label>
+        <textarea asp-for="Request.Details" rows="2" class="form-control" placeholder="напр. без текст, български изпълнители, 90-те..."></textarea>
+        <span asp-validation-for="Request.Details" class="text-danger small"></span>
+    </div>
+    <div class="col-12 d-flex flex-wrap align-items-center gap-3">
+        <div class="form-check form-switch mb-0">
+            <input asp-for="Request.UseFavorites" class="form-check-input" role="switch" />
+            <label asp-for="Request.UseFavorites" class="form-check-label"></label>
+        </div>
+        <button class="btn btn-accent ms-auto submit-btn">
+            <span class="btn-label"><i class="bi bi-stars"></i> Препоръчай</span>
+            <span class="btn-loading d-none"><span class="spinner-border spinner-border-sm"></span> Генерирам...</span>
+        </button>
+    </div>
+</form>
+
+@if (Model.Error != null)
+{
+    <div class="alert alert-danger d-flex gap-2"><i class="bi bi-exclamation-triangle-fill"></i><div>@Model.Error</div></div>
+}
+
+@if (Model.Results is { Count: > 0 })
+{
+    <div class="section-head"><h3 class="h5 mb-0">Препоръчани за теб</h3></div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+        @foreach (var item in Model.Results)
+        {
+            <div class="col">
+                <div class="rec-item">
+                    <div class="rec-reason"><i class="bi bi-chat-quote"></i> @item.Suggestion.Reason</div>
+                    @if (item.Track != null)
+                    {
+                        <partial name="_TrackCard" model="item.Track" view-data='new ViewDataDictionary(ViewData) { { "ShowAdd", true } }' />
+                    }
+                    else
+                    {
+                        <div class="track-card p-3">
+                            <div class="track-title">@item.Suggestion.Title</div>
+                            <div class="track-artist">@item.Suggestion.Artist</div>
+                            <div class="text-muted small mt-2">Не е намерена в Deezer.</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}

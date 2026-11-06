@@ -1,0 +1,24 @@
+@model PlaylistSummary
+<a class="playlist-card" asp-controller="Playlists" asp-action="Details" asp-route-id="@Model.Id">
+    <div class="pl-mosaic">
+        @for (var i = 0; i < 4; i++)
+        {
+            if (i < Model.Covers.Count)
+            {
+                <img src="@Model.Covers[i]" alt="" loading="lazy" />
+            }
+            else
+            {
+                <div class="pl-mosaic-empty"><i class="bi bi-music-note"></i></div>
+            }
+        }
+    </div>
+    <div class="playlist-body">
+        <div class="track-title" title="@Model.Name">@Model.Name</div>
+        <div class="track-artist">@Model.TrackCount @(Model.TrackCount == 1 ? "песен" : "песни")</div>
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <div class="playlist-desc">@Model.Description</div>
+        }
+    </div>
+</a>

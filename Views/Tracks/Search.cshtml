@@ -1,0 +1,35 @@
+@model TrackListViewModel
+@{
+    ViewData["Title"] = "Търсене";
+}
+<div class="section-head">
+    <h2><i class="bi bi-search text-accent"></i> Търсене в Deezer</h2>
+</div>
+
+<form method="get" asp-action="Search" class="search-box mb-4">
+    <i class="bi bi-search"></i>
+    <input type="text" name="q" value="@Model.Query" class="form-control form-control-lg" placeholder="Изпълнител, песен или албум..." autofocus />
+    <button class="btn btn-accent btn-lg">Търси</button>
+</form>
+
+@if (Model.Error != null)
+{
+    <div class="alert alert-warning">@Model.Error</div>
+}
+else if (!string.IsNullOrWhiteSpace(Model.Query) && Model.Tracks.Count == 0)
+{
+    <div class="empty-state"><i class="bi bi-emoji-frown"></i><p>Няма намерени резултати за „@Model.Query“.</p></div>
+}
+else if (string.IsNullOrWhiteSpace(Model.Query))
+{
+    <div class="empty-state"><i class="bi bi-music-note-list"></i><p>Въведете изпълнител или песен, за да започнете.</p></div>
+}
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3">
+    @foreach (var t in Model.Tracks)
+    {
+        <div class="col">
+            <partial name="_TrackCard" model="t" view-data='new ViewDataDictionary(ViewData) { { "ShowAdd", true } }' />
+        </div>
+    }
+</div>

@@ -1,0 +1,54 @@
+@model TrackDto
+@{
+    var showAdd = ViewData["ShowAdd"] as bool? ?? false;
+}
+<div class="track-card h-100">
+    <div class="cover-wrap">
+        @if (!string.IsNullOrEmpty(Model.CoverUrl))
+        {
+            <img src="@Model.CoverUrl" alt="@Model.Title" loading="lazy" />
+        }
+        else
+        {
+            <div class="cover-placeholder"><i class="bi bi-music-note-beamed"></i></div>
+        }
+        @if (!string.IsNullOrEmpty(Model.PreviewUrl))
+        {
+            <button type="button" class="play-btn play-overlay" aria-label="Пусни"
+                    data-src="@Model.PreviewUrl" data-title="@Model.Title"
+                    data-artist="@Model.Artist" data-cover="@Model.CoverUrl">
+                <i class="bi bi-play-fill"></i>
+            </button>
+        }
+    </div>
+    <div class="track-body">
+        <div class="track-title" title="@Model.Title">@Model.Title</div>
+        <div class="track-artist" title="@Model.Artist">@Model.Artist</div>
+    </div>
+    <div class="track-actions">
+        @if (!string.IsNullOrEmpty(Model.Link))
+        {
+            <a href="@Model.Link" target="_blank" rel="noopener" class="link-deezer">Deezer <i class="bi bi-box-arrow-up-right"></i></a>
+        }
+        @if (showAdd)
+        {
+            <div class="ms-auto d-flex align-items-center gap-1">
+                <button type="button" class="btn btn-sm btn-accent-outline add-pl-btn" title="Добави в плейлист" aria-label="Добави в плейлист"
+                        data-id="@Model.DeezerId" data-title="@Model.Title" data-artist="@Model.Artist" data-album="@Model.Album"
+                        data-cover="@Model.CoverUrl" data-preview="@Model.PreviewUrl" data-link="@Model.Link">
+                    <i class="bi bi-collection-play"></i>
+                </button>
+                <form asp-controller="Tracks" asp-action="Add" method="post" class="ajax-add">
+                    <input type="hidden" name="DeezerId" value="@Model.DeezerId" />
+                    <input type="hidden" name="Title" value="@Model.Title" />
+                    <input type="hidden" name="Artist" value="@Model.Artist" />
+                    <input type="hidden" name="Album" value="@Model.Album" />
+                    <input type="hidden" name="CoverUrl" value="@Model.CoverUrl" />
+                    <input type="hidden" name="PreviewUrl" value="@Model.PreviewUrl" />
+                    <input type="hidden" name="Link" value="@Model.Link" />
+                    <button type="submit" class="btn btn-sm btn-accent-outline"><i class="bi bi-heart"></i> Добави</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>
